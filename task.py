@@ -32,21 +32,12 @@ class Task():
         reward = 0
 
         if self.sim.pose[2] < self.target_pos[2]:
-            reward = -min(abs(self.sim.pose[2] - self.target_pos[2]), 10.0)
-            reward -= 0.5 * min(abs(self.sim.pose[:2]).sum(), 10)
-            reward += self.sim.find_body_velocity()[2]
-            reward -= 0.2 * min(abs(self.sim.angular_v.sum()), 10)
-            if self.sim.pose[2] <= 0:
-                reward -= 10.0
-        elif self.sim.pose[2] >= self.target_pos[2]:
-            reward += 50.0
-        """
-        reward = -min(abs(self.sim.pose[2] - self.target_pos[2]).sum(), 20.0)
-        if self.sim.pose[2] >= self.target_pos[2]:
-            reward += 10.0
-        if self.sim.time > self.sim.runtime:
-            reward -= 10.0
-        """
+            reward -= abs(self.sim.pose[2] - self.target_pos[2])
+            reward -= abs(self.sim.pose[:2]).sum()
+            #reward += max(self.sim.v[2], 5) if self.sim.v[2] > 0 else self.sim.v[2]
+            reward -= 0.2 * abs(self.sim.pose[3:]).sum()
+
+            reward += self.sim.v[2]
         return reward
 
     def step(self, rotor_speeds):
@@ -57,9 +48,10 @@ class Task():
             done = self.sim.next_timestep(rotor_speeds) # update the sim pose and velocities
 
             if self.sim.pose[2] >= self.target_pos[2]:
-                done = True
+                reward = 500.0
+            else:
+                reward += self.get_reward()
 
-            reward += self.get_reward()
             pose_all.append(self.sim.pose)
         next_state = np.concatenate(pose_all)
         return next_state, reward, done
