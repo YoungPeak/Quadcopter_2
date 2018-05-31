@@ -34,17 +34,17 @@ class Actor:
 
         # Add hidden layers
         net = layers.Dense(units=32,
-                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0003, seed=None))(states)
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(states)
         net1 = layers.BatchNormalization()(net)
         net1 = layers.Activation('relu')(net1)
 
         net2 = layers.Dense(units=64,
-                            kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0003, seed=None))(net1)
+                            kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net1)
         net2 = layers.BatchNormalization()(net2)
         net2 = layers.Activation('relu')(net2)
 
         net3 = layers.Dense(units=32,
-                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0003, seed=None))(net2)
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net2)
         net3 = layers.BatchNormalization()(net3)
         net3 = layers.Activation('relu')(net3)
 

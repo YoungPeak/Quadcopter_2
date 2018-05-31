@@ -31,13 +31,29 @@ class Task():
         """Uses current pose of sim to return reward."""
         reward = 0
 
-        if self.sim.pose[2] < self.target_pos[2]:
-            reward -= abs(self.sim.pose[2] - self.target_pos[2])
-            reward -= abs(self.sim.pose[:2]).sum()
-            #reward += max(self.sim.v[2], 5) if self.sim.v[2] > 0 else self.sim.v[2]
-            reward -= 0.2 * abs(self.sim.pose[3:]).sum()
+        if self.sim.pose[2] >= self.target_pos[2]:
+            reward = 200
+        else:
+            reward = -abs(self.sim.pose[2] - self.target_pos[2])
+            if self.sim.v[2] > 0:
+                reward += 2
+            #reward += 0.5 * self.sim.v[2]
+            #reward -= 0.3 * abs(self.sim.pose[:2]).sum()
 
-            reward += self.sim.v[2]
+            angle_pos = min(abs(self.sim.pose[3] - 0), abs(self.sim.pose[3] - 2 * math.pi)) \
+                      + min(abs(self.sim.pose[4] - 0), abs(self.sim.pose[4] - 2 * math.pi))\
+                      + min(abs(self.sim.pose[5] - 0), abs(self.sim.pose[5] - 2 * math.pi))
+            if angle_pos <= 1:
+                reward += 1
+
+            #reward -= 0.2 * abs(self.sim.pose[3:]).sum()
+            #print(self.sim.pose, self.sim.v)
+            #reward -= 0.1 * abs(self.sim.pose[:2]).sum()
+        #reward += max(self.sim.v[2], 5) if self.sim.v[2] > 0 else self.sim.v[2]
+        #reward -= 0.2 * abs(self.sim.pose[3:]).sum()
+
+        #print(self.sim.pose, self.sim.v)
+
         return reward
 
     def step(self, rotor_speeds):
@@ -46,12 +62,9 @@ class Task():
         pose_all = []
         for _ in range(self.action_repeat):
             done = self.sim.next_timestep(rotor_speeds) # update the sim pose and velocities
-
             if self.sim.pose[2] >= self.target_pos[2]:
-                reward = 500.0
-            else:
-                reward += self.get_reward()
-
+                done = True
+            reward += self.get_reward()
             pose_all.append(self.sim.pose)
         next_state = np.concatenate(pose_all)
         return next_state, reward, done

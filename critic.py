@@ -27,20 +27,24 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=32)(states)
+        net_states = layers.Dense(units=32,
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(states)
         net_states = layers.BatchNormalization()(net_states)
         net_states = layers.Activation('relu')(net_states)
 
-        net_states1 = layers.Dense(units=64)(net_states)
+        net_states1 = layers.Dense(units=64,
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net_states)
         net_states1 = layers.BatchNormalization()(net_states1)
         net_states1 = layers.Activation('relu')(net_states1)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=32)(actions)
+        net_actions = layers.Dense(units=32,
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(actions)
         net_actions = layers.BatchNormalization()(net_actions)
         net_actions = layers.Activation('relu')(net_actions)
 
-        net_actions1 = layers.Dense(units=64)(net_actions)
+        net_actions1 = layers.Dense(units=64,
+                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net_actions)
         net_actions1 = layers.BatchNormalization()(net_actions1)
         net_actions1 = layers.Activation('relu')(net_actions1)
 
@@ -49,12 +53,16 @@ class Critic:
         # Combine state and action pathways
         net = layers.Add()([net_states1, net_actions1])
         #net = layers.BatchNormalization()(net)
-        #net = layers.Activation('tanh')(net)
+        #net = layers.Activation('linear')(net)
 
         # Add more layers to the combined network if needed
 
+        net2 = layers.Dense(units=64)(net)
+        net2 = layers.BatchNormalization()(net2)
+        net2 = layers.Activation('linear')(net2)
+
         # Add final output layer to prduce action values (Q values)
-        Q_values = layers.Dense(units=1, name='q_values')(net)
+        Q_values = layers.Dense(units=1, name='q_values')(net2)
 
         # Create Keras model
         self.model = models.Model(inputs=[states, actions], outputs=Q_values)
