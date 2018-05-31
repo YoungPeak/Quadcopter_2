@@ -55,14 +55,10 @@ class Critic:
         #net = layers.BatchNormalization()(net)
         #net = layers.Activation('linear')(net)
 
-        # Add more layers to the combined network if needed
-
-        net2 = layers.Dense(units=64)(net)
-        net2 = layers.BatchNormalization()(net2)
-        net2 = layers.Activation('linear')(net2)
+        # Add more layers to the combined network if need
 
         # Add final output layer to prduce action values (Q values)
-        Q_values = layers.Dense(units=1, name='q_values')(net2)
+        Q_values = layers.Dense(units=1, name='q_values')(net)
 
         # Create Keras model
         self.model = models.Model(inputs=[states, actions], outputs=Q_values)
