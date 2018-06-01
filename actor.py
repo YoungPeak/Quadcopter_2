@@ -33,23 +33,21 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=32,
-                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(states)
+        net = layers.Dense(units=32)(states)
         net1 = layers.BatchNormalization()(net)
         net1 = layers.Activation('relu')(net1)
 
-        net2 = layers.Dense(units=64,
-                            kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net1)
+        net2 = layers.Dense(units=64)(net1)
         net2 = layers.BatchNormalization()(net2)
         net2 = layers.Activation('relu')(net2)
 
-        net3 = layers.Dense(units=32,
-                           kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None))(net2)
+        net3 = layers.Dense(units=32)(net2)
         net3 = layers.BatchNormalization()(net3)
         net3 = layers.Activation('relu')(net3)
 
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size,
+                                   kernel_initializer=initializers.RandomUniform(minval=0.0001, maxval=0.0001, seed=None),
                                    activation='sigmoid',
             name='raw_actions')(net3)
 
@@ -67,7 +65,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.00001)
         #optimizer = optimizers.SGD(lr=0.0001, clipvalue=1)
         updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(
