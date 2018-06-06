@@ -27,20 +27,20 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=32)(states)
+        net_states = layers.Dense(units=300)(states)
         net_states = layers.BatchNormalization()(net_states)
         net_states = layers.Activation('relu')(net_states)
 
-        net_states1 = layers.Dense(units=64)(net_states)
+        net_states1 = layers.Dense(units=400)(net_states)
         net_states1 = layers.BatchNormalization()(net_states1)
         net_states1 = layers.Activation('relu')(net_states1)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=32)(actions)
+        net_actions = layers.Dense(units=300)(actions)
         net_actions = layers.BatchNormalization()(net_actions)
         net_actions = layers.Activation('relu')(net_actions)
 
-        net_actions1 = layers.Dense(units=64)(net_actions)
+        net_actions1 = layers.Dense(units=400)(net_actions)
         net_actions1 = layers.BatchNormalization()(net_actions1)
         net_actions1 = layers.Activation('relu')(net_actions1)
 
@@ -60,7 +60,7 @@ class Critic:
         self.model = models.Model(inputs=[states, actions], outputs=Q_values)
 
         # Define optimizer and compile model for training with built-in loss function
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.001)
         #optimizer = optimizers.SGD(lr=0.001, clipvalue=1)
         self.model.compile(optimizer=optimizer, loss='mse')
 

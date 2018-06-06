@@ -29,24 +29,18 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
-        reward = 0
+        reward = -1
 
         if self.sim.pose[2] >= self.target_pos[2]:
             reward = 50
         elif self.sim.pose[2] <= 0:
             reward = -50
         else:
-            reward = -abs(self.sim.pose[2] - self.target_pos[2])
+            #reward = -abs(self.sim.pose[2] - self.target_pos[2])
             #reward = self.sim.pose[2]
 
-            reward += max(self.sim.v[2], 0)
-            #reward -= 0.3 * abs(self.sim.pose[:2]).sum()
-
-            angle_pos = min(abs(self.sim.pose[3] - 0), abs(self.sim.pose[3] - 2 * math.pi)) \
-                      + min(abs(self.sim.pose[4] - 0), abs(self.sim.pose[4] - 2 * math.pi))\
-                      + min(abs(self.sim.pose[5] - 0), abs(self.sim.pose[5] - 2 * math.pi))
-            if angle_pos <= 1:
-                reward += 1.0
+            reward += self.sim.v[2]
+            reward -= 0.3 * abs(self.sim.pose[:2]).sum()
 
             #reward -= 0.2 * abs(self.sim.pose[3:]).sum()
             #print(self.sim.pose, self.sim.v)
